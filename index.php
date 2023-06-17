@@ -7,7 +7,7 @@ if (isset($_SESSION["user_id"])) {
     $result = $mysqli->query($sql);
     $user = $result->fetch_assoc();
 
-    $_SESSION['name'] = $user['name']; // Dodaj tę linię do ustawienia wartości 'name' w sesji
+    $_SESSION['name'] = $user['name'];
 }
 ?>
 

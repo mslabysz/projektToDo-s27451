@@ -13,7 +13,10 @@ $mysqli = require __DIR__ . "/database.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add-todo-btn'])) {
     $tasks = $_POST['add-todo'];
     $priority = $_POST['add-priority']; // Pobierz wybraną wartość priorytetu
-    $insert = "INSERT INTO `todolist` (`user_id`, `tasks`, `priority`, `completed`, `created_at`, `updated_at`) VALUES ('$user_id', '$tasks', '$priority', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+    $due_date=$_POST['add-due-date'];
+    $notes = $_POST['notes'];
+    $insert = "INSERT INTO `todolist` (`user_id`, `tasks`, `priority`, `due_date`, `notes`, `completed`, `created_at`, `updated_at`)
+VALUES ('$user_id', '$tasks', '$priority', '$due_date', '$notes', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
     $query = $mysqli->query($insert);
 
     if ($query) {
@@ -56,8 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-todo-btn'])) {
     $task_id = $_POST['task_id'];
     $task_name = $_POST['edit-todo'];
     $task_priority = $_POST['priority'];
+    $due_date=$_POST['due-date'];
+    $task_note=$_POST['note'];
 
-    $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority', `updated_at` = CURRENT_TIMESTAMP WHERE `id` = '$task_id'";
+    $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority',`due_date` = '$due_date',`notes` = '$task_note', `updated_at` = CURRENT_TIMESTAMP WHERE `id` = '$task_id'";
     $u_query = $mysqli->query($update);
 
     if ($u_query) {
@@ -122,10 +127,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clear-btn'])) {
         echo "<script>alert('Coś poszło nie tak! Spróbuj ponownie.');</script>";
     }
 }
-
+$search = isset($_GET['search-todo']) ? $_GET['search-todo'] : '';
 $select = "SELECT * FROM `todolist` WHERE `user_id` = '$user_id' AND `completed` = 0";
 $result = $mysqli->query($select);
 ?>
+
+
 
 <!DOCTYPE html>
 <html>
@@ -140,6 +147,40 @@ $result = $mysqli->query($select);
 <body>
 <h1>Witaj, <?php echo $name; ?>!</h1>
 
+<h3>Kalendarz:</h3>
+<div id="calendar"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/fullcalendar.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            events: {
+                url: 'events.php',
+                type: 'POST',
+                data: {
+                    user_id: <?php echo $user_id; ?> // przekazanie identyfikatora użytkownika
+                },
+                error: function () {
+                    alert('Wystąpił błąd podczas pobierania wydarzeń!');
+                }
+            }
+        });
+    });
+</script>
+
+<h3>Wyszukaj zadanie:</h3>
+<form method="get" action="">
+    <input type="text" name="search-todo" placeholder="Wpisz nazwę zadania" value="<?php echo $search; ?>">
+    <button type="submit" name="search-btn">Szukaj</button>
+</form>
+
+
 <h2>Dodaj zadanie:</h2>
 <form method="post" action="">
     <input type="text" name="add-todo" required>
@@ -149,27 +190,48 @@ $result = $mysqli->query($select);
         <option value="sredni">Średni</option>
         <option value="wysoki">Wysoki</option>
     </select>
+    <label for="add-due-date">Termin wykonania:</label>
+    <input type="date" name="add-due-date" required>
     <button type="submit" name="add-todo-btn">Dodaj zadanie</button>
+    <label for="notes">Notatki:</label>
+    <textarea name="notes" id="notes"></textarea>
 </form>
 
 <h2>Edytuj zadanie:</h2>
 <?php
 if (isset($task_name)) {
+    $task_note = ''; // Przykładowa początkowa wartość zmiennej $task_note
+    $task_due_date = ''; // Przykładowa początkowa wartość zmiennej $task_due_date
+
+    // Sprawdź, czy w przesłanych danych znajdują się notatka i termin wykonania
+    if (isset($_POST['note'])) {
+        $task_note = $_POST['note'];
+    }
+
+    if (isset($_POST['due-date'])) {
+        $task_due_date = $_POST['due-date'];
+    }
     ?>
     <form method="post" action="">
         <input type="hidden" name="task_id" value="<?php echo $task_id; ?>">
-        <input type="text" name="edit-todo" value="<?php echo $task_name; ?>" required>
+        <label for="edit-todo">Nazwa zadania:</label>
+        <input type="text" name="edit-todo" id="edit-todo" value="<?php echo $task_name; ?>" required>
         <label for="priority">Priorytet:</label>
         <select name="priority" id="priority">
             <option value="niski" <?php if ($task_priority === 'niski') echo 'selected'; ?>>Niski</option>
-            <option value="sredni" <?php if ($task_priority === 'średni') echo 'selected'; ?>>Średni</option>
+            <option value="sredni" <?php if ($task_priority === 'sredni') echo 'selected'; ?>>Średni</option>
             <option value="wysoki" <?php if ($task_priority === 'wysoki') echo 'selected'; ?>>Wysoki</option>
         </select>
+        <label for="due-date">Termin wykonania:</label>
+        <input type="date" name="due-date" id="due-date" value="<?php echo $due_date; ?>">
+        <label for="note">Notatka:</label>
+        <textarea name="note" id="note"><?php echo $task_note; ?></textarea>
         <button type="submit" name="update-todo-btn">Zaktualizuj</button>
     </form>
     <?php
 }
 ?>
+
 
 <h3>Twoje zadania:</h3>
 <table>
@@ -177,7 +239,9 @@ if (isset($task_name)) {
     <tr>
         <th>Zadanie</th>
         <th>Data dodania</th>
+        <th>Termin wykonania</th>
         <th>Priorytet</th>
+        <th>Notatki</th>
         <th>Akcje</th>
     </tr>
     </thead>
@@ -190,16 +254,21 @@ if (isset($task_name)) {
             $task_created_at = $row['created_at'];
             $task_priority = $row['priority'];
             $task_completed = $row['completed'];
+            $due_date=$row['due_date'];
+            $notes=$row['notes'];
 
             echo "<tr>";
             echo "<td>$task_name</td>";
             echo "<td>$task_created_at</td>";
+            echo "<td>$due_date</td>";
             echo "<td>$task_priority</td>";
+            echo "<td>$notes</td>";
+
             echo "<td>";
             echo "<form method='post' action=''>
-                        <input type='hidden' name='task_id' value='$task_id'>
-                        <button type='submit' name='edit-todo-btn'>Edytuj zadanie</button>
-                    </form>";
+        <input type='hidden' name='task_id' value='$task_id'>
+        <button type='submit' name='edit-todo-btn'>Edytuj zadanie</button>
+    </form>";
             if ($task_completed) {
                 echo "<form method='post' action=''>
                         <input type='hidden' name='task_id' value='$task_id'>
@@ -231,7 +300,9 @@ if (isset($task_name)) {
     <tr>
         <th>Zadanie</th>
         <th>Data dodania</th>
+        <th>Termin wykonania</th>
         <th>Priorytet</th>
+        <th>Notatki</th>
         <th>Akcje</th>
     </tr>
     </thead>
@@ -247,12 +318,15 @@ if (isset($task_name)) {
             $task_created_at = $row['created_at'];
             $task_priority = $row['priority'];
             $task_completed = $row['completed'];
+            $due_date=$row['due_date'];
+            $notes=$row['notes'];
 
             echo "<tr>";
             echo "<td>$task_name</td>";
             echo "<td>$task_created_at</td>";
+            echo "<td>$due_date</td>";
             echo "<td>$task_priority</td>";
-            echo "<td>";
+            echo "<td>$notes</td>";
             echo "<form method='post' action=''>
                         <input type='hidden' name='task_id' value='$task_id'>
                         <button type='submit' name='restore-btn'>Przywróć do listy</button>
@@ -273,6 +347,16 @@ if (isset($task_name)) {
 
 <form method="post" action="">
     <button type="submit" name="clear-btn">Wyczyść wykonane</button>
+</form>
+<form method="post" action="export.php">
+    <button type="submit" name="export-btn">Eksportuj do CSV</button>
+</form>
+<form method="post" action="import.php" enctype="multipart/form-data">
+    <input type="file" name="import-file">
+    <button type="submit" name="import-btn">Importuj z CSV</button>
+</form>
+<form method="post" action="logout.php">
+    <button type="submit" name="logout-btn">Wyloguj</button>
 </form>
 </body>
 </html>
