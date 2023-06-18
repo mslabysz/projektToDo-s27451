@@ -26,7 +26,7 @@ if (isset($_SESSION["user_id"])) {
 
     <p>Witaj <?= htmlspecialchars($user["name"]) ?>!</p>
     <p><a href="home.php">Przejdź do swoich zadań</a></p>
-
+    <p><a href="projects.php">Przejdź do swoich projektów</a></p>
     <p><a href="logout.php">Wyloguj</a></p>
 
 <?php else: ?>

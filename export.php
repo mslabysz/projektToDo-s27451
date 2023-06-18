@@ -1,13 +1,11 @@
 <?php
-// export.php
-
 session_start();
 $user_id = $_SESSION['user_id'];
 $name = $_SESSION['name'];
 
 $mysqli = require __DIR__ . "/database.php";
 
-// Pobierz zadania użytkownika
+// Pobieranie zadań użytkownika
 $select = "SELECT * FROM `todolist` WHERE `user_id` = '$user_id' AND `completed` = 0";
 $result = $mysqli->query($select);
 
@@ -29,10 +27,7 @@ if ($result && $result->num_rows > 0) {
         $data = array($task_name, $task_created_at, $due_date, $task_priority);
         fputcsv($file, $data);
     }
-
-    // Zamykanie pliku
     fclose($file);
-
     // Pobieranie pliku CSV
     header('Content-Type: application/csv');
     header('Content-Disposition: attachment; filename="todo_list.csv";');
