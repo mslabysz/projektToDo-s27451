@@ -37,6 +37,7 @@ WPRG
 
 # Próbka wyglądu aplikacji
 * Do wyglądu wykorzystałem water.css
+* Użyłem gotowca dlatego, że z moimi umiejętnościami CSSa strona nie byłaby aż tak przejrzysta, co według mnie jest priorytetem w aplikacjach typu TODO, których wygląd powinien być prosty i czytelny
 ## Strona logowania
  ![obraz](https://github.com/mslabysz/projektToDo-s27451/assets/100942888/bd2a0aaa-1a84-4ccb-bda6-5101a4a63fae)
  ## Strona rejestracji
