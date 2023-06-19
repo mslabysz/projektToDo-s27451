@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit-todo-btn'])) {
     $task_id = $_POST['task_id'];
     $select = "SELECT * FROM `todolist` WHERE `id` = '$task_id'";
     $result = $mysqli->query($select);
-
+    $project = isset($_POST['project']) ? $_POST['project'] : null;
     if ($result && $result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $task_name = $row['tasks'];
@@ -72,8 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-todo-btn'])) {
     $task_priority = $_POST['priority'];
     $due_date=$_POST['due-date'];
     $task_note=$_POST['note'];
-    $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority',`due_date` = '$due_date',`notes` = '$task_note',
+    $project = isset($_POST['project']) ? $_POST['project'] : null;
+    if(empty($project)){
+        $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority',`due_date` = '$due_date',`notes` = '$task_note',`project_id` = NULL,
                       `updated_at` = CURRENT_TIMESTAMP WHERE `id` = '$task_id'";
+    }else {
+        $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority',`due_date` = '$due_date',`notes` = '$task_note',`project_id` = '$project',
+                      `updated_at` = CURRENT_TIMESTAMP WHERE `id` = '$task_id'";
+    }
     $u_query = $mysqli->query($update);
 
     if ($u_query) {
@@ -138,7 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clear-btn'])) {
         echo "<script>alert('Coś poszło nie tak! Spróbuj ponownie.');</script>";
     }
 }
-$search = isset($_GET['search-todo']) ? $_GET['search-todo'] : '';
 $select = "SELECT * FROM `todolist` WHERE `user_id` = '$user_id' AND `completed` = 0";
 $result = $mysqli->query($select);
 ?>
@@ -157,15 +162,6 @@ $result = $mysqli->query($select);
 <form method="post" action="calendar.php">
     <button type="submit" name="logout-btn">Kalendarz</button>
 </form>
-
-
-<div>
-    <h3>Wyszukaj zadanie:</h3>
-    <form method="get" action="">
-        <input type="text" name="search-todo" placeholder="Wpisz nazwę zadania" value="<?php echo $search; ?>">
-        <button type="submit" name="search-btn">Szukaj</button>
-    </form>
-</div>
 <br><br>
 <div>
     <h2>Dodaj zadanie:</h2>
@@ -229,6 +225,21 @@ $result = $mysqli->query($select);
             <input type="date" name="due-date" id="due-date" value="<?php echo $due_date; ?>">
             <label for="note">Notatka:</label>
             <textarea name="note" id="note"><?php echo $task_note; ?></textarea>
+            <label for="project">Projekt:</label>
+            <select name="project" id="project">
+                <option value="">-- Wybierz projekt --</option>
+                <?php
+                $selectProjects = "SELECT * FROM `projects`";
+                $projectsResult = $mysqli->query($selectProjects);
+                if ($projectsResult && $projectsResult->num_rows > 0) {
+                    while ($projectRow = $projectsResult->fetch_assoc()) {
+                        $projectId = $projectRow['id'];
+                        $projectName = $projectRow['name'];
+                        echo "<option value='$projectId'>$projectName</option>";
+                    }
+                }
+                ?>
+            </select>
             <button type="submit" name="update-todo-btn">Zaktualizuj</button>
         </form>
         <?php
@@ -336,7 +347,7 @@ $result = $mysqli->query($select);
                 echo "<td>";
                 echo "<form method='post' action=''>
                             <input type='hidden' name='task_id' value='$task_id'>
-                            <button type='submit' name='restore-btn'>Przywróć do listy</button>
+                            <button type='submit' name='restore-btn'>Oznacz jako niewykonane</button>
                         </form>";
                 echo "<form method='post' action=''>
                             <input type='hidden' name='row_id' value='$task_id'>
@@ -355,7 +366,7 @@ $result = $mysqli->query($select);
 <br><br>
 <div>
     <form method="post" action="">
-        <button type="submit" name="clear-btn">Wyczyść wykonane</button>
+        <button type="submit" name="clear-btn">Wyczyść listę wykonanych</button>
     </form>
     <br>
     <form method="post" action="export.php">

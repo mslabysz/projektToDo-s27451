@@ -23,7 +23,7 @@ $mysqli = require __DIR__ . "/database.php";
                 url: 'events.php',
                 type: 'POST',
                 data: {
-                    user_id: <?php echo $user_id; ?> // przekazanie identyfikatora użytkownika
+                    user_id: <?php echo $user_id; ?>
                 },
                 error: function () {
                     alert('Wystąpił błąd podczas pobierania wydarzeń!');
