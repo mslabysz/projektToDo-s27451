@@ -59,3 +59,13 @@ WPRG
 * Możliwość wyboru języka
 * Dzielenie się zadaniami z innymi użytkownikami
 * Konto administratora
+
+## Co dał mi ten projekt?
+* Ulepszenie umiejętności PHP
+* Ulepszenie umiejętności HTML
+* Zapoznanie się z JavaScriptem
+* Pierwsza praca nad większym projektem
+* Ulepszenie umiejętności SQL
+* Używanie Gita
+* Ulepszenie umiejętności problem solvingu
+* Zapoznanie się z ogólnym konceptem tworzenia aplikacji z kontem użytkownika
