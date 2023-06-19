@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 if (isset($_SESSION["user_id"])) {
     $mysqli = require __DIR__ . "/database.php";
     $sql = "SELECT * FROM user WHERE id = {$_SESSION["user_id"]}";
@@ -27,6 +28,7 @@ if (isset($_SESSION["user_id"])) {
     <p>Witaj <?= htmlspecialchars($user["name"]) ?>!</p>
     <p><a href="home.php">Przejdź do swoich zadań</a></p>
     <p><a href="projects.php">Przejdź do swoich projektów</a></p>
+    <p><a href="calendar.php">Przejdź do swojego kalendarza</a></p>
     <p><a href="logout.php">Wyloguj</a></p>
 
 <?php else: ?>

@@ -125,6 +125,9 @@ if ($projectsResult && $projectsResult->num_rows > 0) {
 <form method="post" action="home.php">
     <button type="submit">Przejdź do moich zadań</button>
 </form>
+<form method="post" action="index.php">
+    <button type="submit">Przejdź do strony początkowej</button>
+</form>
 <form method="post" action="logout.php">
     <button type="submit" name="logout-btn">Wyloguj</button>
 </form>

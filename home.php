@@ -143,8 +143,6 @@ $select = "SELECT * FROM `todolist` WHERE `user_id` = '$user_id' AND `completed`
 $result = $mysqli->query($select);
 ?>
 
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -369,7 +367,10 @@ $result = $mysqli->query($select);
     </form>
     <br>
     <form method="post" action="projects.php">
-        <button type="submit">Przejdź do moich projektów</button>
+        <button type="submit">Przejdź do swoich projektów</button>
+    </form>
+    <form method="post" action="index.php">
+        <button type="submit">Przejdź do strony początkowej</button>
     </form>
     <br>
     <form method="post" action="logout.php">

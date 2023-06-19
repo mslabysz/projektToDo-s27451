@@ -34,7 +34,7 @@ $mysqli = require __DIR__ . "/database.php";
 </script>
 
 <form method="post" action="home.php">
-    <button type="submit" name="home-btn">Wróć do zadań</button>
+    <button type="submit" name="home-btn">Przejdź do zadań</button>
 </form>
 <form method="post" action="projects.php">
     <button type="submit" name="projects-btn">Przejdź do projektów</button>
