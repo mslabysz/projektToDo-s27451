@@ -1,17 +1,20 @@
 <?php
-// Połączenie z bazą danych
-$mysqli = new mysqli('localhost', 'root', '', 'logindb');
-if ($mysqli->connect_errno) {
-    echo "Błąd połączenia z bazą danych: " . $mysqli->connect_error;
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
     exit();
 }
+
+$user_id = $_SESSION['user_id'];
+$name = $_SESSION['name'];
+$mysqli = require __DIR__ . "/database.php";
 
 // Dodawanie nowego projektu
 if (isset($_POST['project_name']) && isset($_POST['project_description'])) {
     $projectName = $_POST['project_name'];
     $projectDescription = $_POST['project_description'];
 
-    // Wstawienie nowego projektu do bazy danych
+    // insertowanie nowego projektu do bazy danych
     $insertProject = "INSERT INTO `projects` (`name`, `description`) VALUES ('$projectName', '$projectDescription')";
     if ($mysqli->query($insertProject)) {
         echo "Nowy projekt został dodany.";
@@ -80,7 +83,7 @@ if ($projectsResult && $projectsResult->num_rows > 0) {
         echo "<h2>Opis: $projectDescription</h2>";
 
         // Usuwanie projektu
-        echo "<a href=\"projects.php?delete_project=$projectId\">Usuń projekt</a>";
+        echo "<a href=\"projects.php?delete_project=$projectId\">Usuń projekt </a>";
 
         // Zadania przypisane do projektu
         $selectTasks = "SELECT * FROM `todolist` WHERE `project_id` = $projectId";

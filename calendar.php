@@ -1,7 +1,6 @@
 <?php
 session_start();
 $user_id = $_SESSION['user_id'];
-$name = $_SESSION['name'];
 
 $mysqli = require __DIR__ . "/database.php";
 ?>
@@ -32,11 +31,17 @@ $mysqli = require __DIR__ . "/database.php";
         });
     });
 </script>
+<div>
+    <form method="post" action="home.php">
+        <button type="submit" name="home-btn">Przejdź do zadań</button>
+    </form>
 
-<form method="post" action="home.php">
-    <button type="submit" name="home-btn">Przejdź do zadań</button>
-</form>
-<form method="post" action="projects.php">
-    <button type="submit" name="projects-btn">Przejdź do projektów</button>
-</form>
+    <form method="post" action="projects.php">
+        <button type="submit" name="projects-btn">Przejdź do projektów</button>
+    </form>
+
+    <form method="post" action="logout.php">
+        <button type="submit" name="logout-btn">Wyloguj</button>
+    </form>
+</div>
 

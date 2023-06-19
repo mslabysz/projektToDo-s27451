@@ -32,9 +32,7 @@ if (isset($_SESSION["user_id"])) {
     <p><a href="logout.php">Wyloguj</a></p>
 
 <?php else: ?>
-
     <p><a href="login.php">Logowanie</a> lub <a href="signup.html">Rejestracja</a></p>
-
 <?php endif; ?>
 
 </body>

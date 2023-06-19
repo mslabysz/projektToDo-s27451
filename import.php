@@ -17,17 +17,17 @@ if (($handle = fopen("todo_list.csv", "r")) !== false) {
         $notes = $data[4];
         $project = $data[5];
 
-        // Sprawdzenie istnienia projektu o podanym project_id w tabeli projects
+        // Sprawdzanie czy projekt istnieje
         $selectProject = "SELECT `id` FROM `projects` WHERE `id` = '$project'";
         $resultProject = $mysqli->query($selectProject);
 
         if ($resultProject !== false) {
             if ($resultProject->num_rows > 0) {
-                // Projekt o podanym project_id istnieje, można wykonać INSERT
+                // Projekt o podanym project_id istnieje, insert z projektem
                 $insert = "INSERT INTO `todolist` (`user_id`, `tasks`, `created_at`, `due_date`, `priority`, `notes`, `project_id`) 
                     VALUES ('$user_id', '$task_name', '$task_created_at', '$due_date', '$task_priority', '$notes', '$project')";
             } else {
-                // Projekt o podanym project_id nie istnieje, wykonaj INSERT bez projektu
+                // Projekt o podanym project_id nie istnieje, insert bez projektu
                 $insert = "INSERT INTO `todolist` (`user_id`, `tasks`, `created_at`, `due_date`, `priority`, `notes`) 
                     VALUES ('$user_id', '$task_name', '$task_created_at', '$due_date', '$task_priority', '$notes')";
             }

@@ -9,7 +9,7 @@ $user_id = $_SESSION['user_id'];
 $name = $_SESSION['name'];
 $mysqli = require __DIR__ . "/database.php";
 
-//Dodaj zadanie
+// Dodaj zadanie
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add-todo-btn'])) {
     $tasks = $_POST['add-todo'];
     $priority = $_POST['add-priority'];
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add-todo-btn'])) {
     }
 }
 
-//Usuń zadanie
+// Usuń zadanie
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dlt-todo-btn'])) {
     $row_id = $_POST['row_id'];
 
@@ -104,20 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark-complete-btn']))
     }
 }
 
-// Oznaczanie zadania jako niewykonane
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark-incomplete-btn'])) {
-    $task_id = $_POST['task_id'];
-    $update = "UPDATE `todolist` SET `completed` = 0 WHERE `id` = '$task_id'";
-    $u_query = $mysqli->query($update);
-
-    if ($u_query) {
-        header("Location: home.php");
-        exit();
-    } else {
-        echo "<script>alert('Coś poszło nie tak! Spróbuj ponownie.');</script>";
-    }
-}
-
 // Przywracanie zadania do listy niewykonanych
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore-btn'])) {
     $task_id = $_POST['task_id'];
@@ -132,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore-btn'])) {
     }
 }
 
-// Wyczyść zadania wykonane
+// Wyczyść wykonane
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clear-btn'])) {
     $clear = "DELETE FROM `todolist` WHERE `user_id` = '$user_id' AND `completed` = 1";
     $c_query = $mysqli->query($clear);
@@ -193,7 +179,6 @@ $result = $mysqli->query($select);
             }
             ?>
         </select>
-
     </form>
 </div>
 <br><br>

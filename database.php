@@ -10,4 +10,4 @@ if($mysqli->connect_errno){
     die("Błąd połączenia: ".$mysqli->connect_error);
 }
 return $mysqli;
-$mysqli->query("SET time_zone = 'Europe/Warsaw'");
+$mysqli->query("SET time_zone = 'Europe/Warsaw'"); //Time zone do daty dodania zadania

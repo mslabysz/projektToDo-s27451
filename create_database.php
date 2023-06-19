@@ -3,15 +3,13 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 
-// Połączenie z serwerem MySQL
 $mysqli = new mysqli($servername, $username, $password);
 
-// Sprawdzenie połączenia
 if ($mysqli->connect_error) {
     die("Błąd połączenia: " . $mysqli->connect_error);
 }
 
-// Tworzenie bazy danych
+// Tworzenie bazy danych jeśli nie istnieje
 $createDatabaseQuery = "CREATE DATABASE IF NOT EXISTS logindb";
 if ($mysqli->query($createDatabaseQuery) === TRUE) {
     echo "Baza danych została utworzona pomyślnie. ";
@@ -19,7 +17,7 @@ if ($mysqli->query($createDatabaseQuery) === TRUE) {
     echo "Błąd podczas tworzenia bazy danych: " . $mysqli->error;
 }
 
-// Użycie bazy danych
+// Użycie bazy ze ścieżki
 $mysqli->select_db("logindb");
 
 // Importowanie struktury tabel i danych
@@ -32,7 +30,6 @@ if ($mysqli->multi_query($importSql) === TRUE) {
     echo "Błąd podczas importowania struktury tabel i danych: " . $mysqli->error;
 }
 
-// Zamknięcie połączenia z bazą danych
 $mysqli->close();
 
 ?>
