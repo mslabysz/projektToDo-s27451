@@ -14,7 +14,7 @@ if ($result && $result->num_rows > 0) {
     $file = fopen('todo_list.csv', 'w');
 
     // Nagłówki kolumn w pliku CSV
-    $headers = array('Zadanie', 'Data dodania', 'Termin wykonania', 'Priorytet');
+    $headers = array('Zadanie', 'Data dodania', 'Termin wykonania', 'Priorytet', 'Notatki', 'Projekt');
     fputcsv($file, $headers);
 
     // Zapisywanie danych z bazy do pliku CSV
@@ -23,11 +23,14 @@ if ($result && $result->num_rows > 0) {
         $task_created_at = $row['created_at'];
         $due_date = $row['due_date'];
         $task_priority = $row['priority'];
+        $notes = $row['notes'];
+        $project = $row['project_id'];
 
-        $data = array($task_name, $task_created_at, $due_date, $task_priority);
+        $data = array($task_name, $task_created_at, $due_date, $task_priority, $notes, $project);
         fputcsv($file, $data);
     }
     fclose($file);
+
     // Pobieranie pliku CSV
     header('Content-Type: application/csv');
     header('Content-Disposition: attachment; filename="todo_list.csv";');
@@ -36,4 +39,6 @@ if ($result && $result->num_rows > 0) {
 } else {
     echo "Brak zadań do wyeksportowania.";
 }
+?>
+
 

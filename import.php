@@ -1,46 +1,51 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
+$user_id = $_SESSION['user_id'];
+$name = $_SESSION['name'];
 
 $mysqli = require __DIR__ . "/database.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['import-btn'])) {
-    if ($_FILES['import-file']['error'] === UPLOAD_ERR_OK) {
-        $file = $_FILES['import-file']['tmp_name'];
+if (($handle = fopen("todo_list.csv", "r")) !== false) {
+    // Pomiń nagłówki
+    fgetcsv($handle);
 
-        // Otwórz plik CSV
-        $handle = fopen($file, "r");
-        if ($handle !== false) {
-            // Przejdź przez każdą linię pliku
-            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-                $tasks = $data[0];
-                $priority = $data[1];
-                $due_date = $data[2];
+    while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+        $task_name = $data[0];
+        $task_created_at = $data[1];
+        $due_date = $data[2];
+        $task_priority = $data[3];
+        $notes = $data[4];
+        $project = $data[5];
 
-                // Wstaw dane do bazy danych
-                $insert = "INSERT INTO `todolist` (`user_id`, `tasks`, `priority`, `due_date`, `completed`, `created_at`, `updated_at`)
-                           VALUES ('{$_SESSION['user_id']}', '$tasks', '$priority', '$due_date', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
-                $query = $mysqli->query($insert);
+        // Sprawdzenie istnienia projektu o podanym project_id w tabeli projects
+        $selectProject = "SELECT `id` FROM `projects` WHERE `id` = '$project'";
+        $resultProject = $mysqli->query($selectProject);
 
-                if (!$query) {
-                    echo "<script>alert('Coś poszło nie tak podczas importowania!');</script>";
-                    break;
-                }
+        if ($resultProject !== false) {
+            if ($resultProject->num_rows > 0) {
+                // Projekt o podanym project_id istnieje, można wykonać INSERT
+                $insert = "INSERT INTO `todolist` (`user_id`, `tasks`, `created_at`, `due_date`, `priority`, `notes`, `project_id`) 
+                    VALUES ('$user_id', '$task_name', '$task_created_at', '$due_date', '$task_priority', '$notes', '$project')";
+            } else {
+                // Projekt o podanym project_id nie istnieje, wykonaj INSERT bez projektu
+                $insert = "INSERT INTO `todolist` (`user_id`, `tasks`, `created_at`, `due_date`, `priority`, `notes`) 
+                    VALUES ('$user_id', '$task_name', '$task_created_at', '$due_date', '$task_priority', '$notes')";
             }
 
-            fclose($handle);
-            header("Location: home.php");
-            exit();
+            if ($mysqli->query($insert) === false) {
+                echo "Błąd podczas importowania rekordu: " . $mysqli->error;
+            }
         } else {
-            echo "<script>alert('Nie udało się otworzyć pliku CSV!');</script>";
+            echo "Błąd podczas sprawdzania projektu: " . $mysqli->error;
         }
-    } else {
-        echo "<script>alert('Wystąpił błąd podczas przesyłania pliku!');</script>";
     }
+    fclose($handle);
 }
+
+$mysqli->close();
+header('Location: home.php');
+exit();
 ?>
+
 
 

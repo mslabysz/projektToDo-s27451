@@ -13,11 +13,20 @@ $mysqli = require __DIR__ . "/database.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add-todo-btn'])) {
     $tasks = $_POST['add-todo'];
     $priority = $_POST['add-priority'];
-    $due_date=$_POST['add-due-date'];
+    $due_date = $_POST['add-due-date'];
     $notes = $_POST['notes'];
-    $project=$_POST['project'];
-    $insert = "INSERT INTO `todolist` (`user_id`, `project_id`, `tasks`, `priority`, `due_date`, `notes`, `completed`, `created_at`, `updated_at`)
-VALUES ('$user_id', '$project', '$tasks', '$priority', '$due_date', '$notes', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+    $project = isset($_POST['project']) ? $_POST['project'] : null;
+
+    if (empty($project)) {
+        // Brak wybranego projektu
+        $insert = "INSERT INTO `todolist` (`user_id`, `project_id`, `tasks`, `priority`, `due_date`, `notes`, `completed`, `created_at`, `updated_at`)
+            VALUES ('$user_id', NULL, '$tasks', '$priority', '$due_date', '$notes', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+    } else {
+        // Wybrano projekt
+        $insert = "INSERT INTO `todolist` (`user_id`, `project_id`, `tasks`, `priority`, `due_date`, `notes`, `completed`, `created_at`, `updated_at`)
+            VALUES ('$user_id', '$project', '$tasks', '$priority', '$due_date', '$notes', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+    }
+
     $query = $mysqli->query($insert);
 
     if ($query) {
@@ -27,6 +36,7 @@ VALUES ('$user_id', '$project', '$tasks', '$priority', '$due_date', '$notes', 0,
         echo "<script>alert('Coś poszło nie tak! Spróbuj ponownie.');</script>";
     }
 }
+
 //Usuń zadanie
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dlt-todo-btn'])) {
     $row_id = $_POST['row_id'];
@@ -145,34 +155,11 @@ $result = $mysqli->query($select);
 <body>
 <h1>Witaj, <?php echo $name; ?>!</h1>
 
-<h3>Kalendarz z twoimi zadaniami:</h3>
-<div id="calendar"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.0/fullcalendar.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#calendar').fullCalendar({
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'month,agendaWeek,agendaDay'
-            },
-            events: {
-                url: 'events.php',
-                type: 'POST',
-                data: {
-                    user_id: <?php echo $user_id; ?> // przekazanie identyfikatora użytkownika
-                },
-                error: function () {
-                    alert('Wystąpił błąd podczas pobierania wydarzeń!');
-                }
-            }
-        });
-    });
-</script>
+<h2>Przedź do kalendarza zadań:</h2>
+<form method="post" action="calendar.php">
+    <button type="submit" name="logout-btn">Kalendarz</button>
+</form>
 
-<br><br>
 
 <div>
     <h3>Wyszukaj zadanie:</h3>
