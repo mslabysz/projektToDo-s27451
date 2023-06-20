@@ -55,7 +55,7 @@ if (isset($_GET['delete_task'])) {
 <head>
     <h1>Dodaj nowy projekt:</h1>
     <meta charset="UTF-8">
-    <title>Aplikacja Todo</title>
+    <title>TODO-APP</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 </head>
 <body>

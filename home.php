@@ -138,7 +138,7 @@ $result = $mysqli->query($select);
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Aplikacja Todo</title>
+    <title>TODO-APP</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 </head>
 <body>

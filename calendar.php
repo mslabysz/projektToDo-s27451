@@ -5,6 +5,7 @@ $user_id = $_SESSION['user_id'];
 $mysqli = require __DIR__ . "/database.php";
 ?>
 <h1>Kalendarz z twoimi zadaniami:</h1>
+<title>TODO-APP</title>
 <div id="calendar"></div>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
