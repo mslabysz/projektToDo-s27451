@@ -1,17 +1,16 @@
 <?php
-$host="szuflandia.pjwstk.edu.pl";
-$dbname="s27451";
-$username="s27451";
-$password="Mak.Slab";
+$host="localhost";
+$username="root";
+$password="";
 
-$mysqli=new mysqli($host,$username,$password,$dbname);
+$mysqli=new mysqli($host,$username,$password);
 
 if ($mysqli->connect_error) {
     die("Błąd połączenia: " . $mysqli->connect_error);
 }
 
 // Tworzenie bazy danych jeśli nie istnieje
-$createDatabaseQuery = "CREATE DATABASE IF NOT EXISTS s27451";
+$createDatabaseQuery = "CREATE DATABASE IF NOT EXISTS logindb";
 if ($mysqli->query($createDatabaseQuery) === TRUE) {
     echo "Baza danych została utworzona pomyślnie. ";
 } else {

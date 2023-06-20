@@ -1,8 +1,8 @@
 <?php
-$host="szuflandia.pjwstk.edu.pl";
-$dbname="s27451";
-$username="s27451";
-$password="Mak.Slab";
+$host="localhost";
+$dbname="logindb";
+$username="root";
+$password="";
 
 $mysqli=new mysqli($host,$username,$password,$dbname);
 
