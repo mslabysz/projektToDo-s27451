@@ -1,9 +1,10 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
+$host="localhost";
+//$dbname="logindb";
+$username="root";
+$password="";
 
-$mysqli = new mysqli($servername, $username, $password);
+$mysqli=new mysqli($host,$username,$password);
 
 if ($mysqli->connect_error) {
     die("Błąd połączenia: " . $mysqli->connect_error);
