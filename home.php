@@ -70,18 +70,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-todo-btn'])) {
     $task_id = $_POST['task_id'];
     $task_name = $_POST['edit-todo'];
     $task_priority = $_POST['priority'];
-    $due_date=$_POST['due-date'];
+    $due_date=isset($_POST['due-date']) ? $_POST['due-date'] : null;
     $task_note=$_POST['note'];
     $project = isset($_POST['project']) ? $_POST['project'] : null;
-    if(empty($project)){
+    if(empty($project)&&!empty($due_date)){
         $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority',`due_date` = '$due_date',`notes` = '$task_note',`project_id` = NULL,
                       `updated_at` = CURRENT_TIMESTAMP WHERE `id` = '$task_id'";
-    }else {
+    }elseif (empty($due_date)&&!empty($project)){
+        $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority',`due_date` = NULL,`notes` = '$task_note',`project_id` = '$project',
+                      `updated_at` = CURRENT_TIMESTAMP WHERE `id` = '$task_id'";
+    } elseif (empty($project)&&empty($due_date)){
+        $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority',`due_date` = NULL,`notes` = '$task_note',`project_id` = NULL,
+                      `updated_at` = CURRENT_TIMESTAMP WHERE `id` = '$task_id'";
+    }
+    else {
         $update = "UPDATE `todolist` SET `tasks` = '$task_name', `priority` = '$task_priority',`due_date` = '$due_date',`notes` = '$task_note',`project_id` = '$project',
                       `updated_at` = CURRENT_TIMESTAMP WHERE `id` = '$task_id'";
     }
+    var_dump($update);
     $u_query = $mysqli->query($update);
-
+    var_dump($u_query);
     if ($u_query) {
         header("Location: home.php");
         exit();
@@ -161,7 +169,6 @@ $result = $mysqli->query($select);
         </select>
         <label for="add-due-date">Termin wykonania:</label>
         <input type="date" name="add-due-date" required>
-        <button type="submit" name="add-todo-btn">Dodaj zadanie</button>
         <label for="notes">Notatki:</label>
         <textarea name="notes" id="notes"></textarea>
         <label for="project">Projekt:</label>
@@ -179,6 +186,7 @@ $result = $mysqli->query($select);
             }
             ?>
         </select>
+        <button type="submit" name="add-todo-btn">Dodaj zadanie</button>
     </form>
 </div>
 <br><br>
